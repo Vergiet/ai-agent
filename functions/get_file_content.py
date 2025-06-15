@@ -2,6 +2,8 @@ import os
 from os.path import abspath
 
 MAX_CHARS = 10000
+
+
 def get_file_content(working_directory, file_path):
     try:
 
@@ -17,13 +19,12 @@ def get_file_content(working_directory, file_path):
 
         with open(abs_file, "r") as file:
             content = file.read(MAX_CHARS)
-        
-        
+
         if len(content) == MAX_CHARS:
             content = content.splitlines()
-            content.append(f"...File {file_path} truncated at {MAX_CHARS} characters")
+            content.append(
+                f"...File {file_path} truncated at {MAX_CHARS} characters")
             content = "\n".join(content)
-            
 
         return content
 
