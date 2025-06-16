@@ -25,7 +25,7 @@
             "program": "main.py",
             "console": "integratedTerminal",
             "args": [
-                "Why are episodes 7-9 so much worse than 1-6? Use one paragraph",
+                "what files are in the root?",
                 "--verbose"
             ]
         }
