@@ -25,7 +25,7 @@
             "program": "main.py",
             "console": "integratedTerminal",
             "args": [
-                "what files are in the root?",
+                "There is a calculator script in the root of the working directory that can calculate calculations and print the result. Currently there are some unit tests failing and i dont know if the test is wrong or the code its testing, can you fix it? Please ask approval before you make any changes.",
                 "--verbose"
             ]
         }

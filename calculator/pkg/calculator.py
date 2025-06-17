@@ -1,5 +1,6 @@
 # calculator.py
 
+
 class Calculator:
     def __init__(self):
         self.operators = {
@@ -7,12 +8,16 @@ class Calculator:
             "-": lambda a, b: a - b,
             "*": lambda a, b: a * b,
             "/": lambda a, b: a / b,
+            "**": lambda a, b: a ** b,  # Exponentiation
+            "%": lambda a, b: a % b,   # Modulo
         }
         self.precedence = {
             "+": 1,
             "-": 1,
             "*": 2,
             "/": 2,
+            "**": 3,  # Higher precedence for exponentiation
+            "%": 2,   # Same precedence as multiplication/division
         }
 
     def evaluate(self, expression):
@@ -24,14 +29,19 @@ class Calculator:
     def _evaluate_infix(self, tokens):
         values = []
         operators = []
-
         for token in tokens:
-            if token in self.operators:
-                while (
-                    operators
-                    and operators[-1] in self.operators
-                    and self.precedence[operators[-1]] >= self.precedence[token]
-                ):
+            if token == '(':
+                operators.append(token)
+            elif token == ')':
+                while operators and operators[-1] != '(':
+                    self._apply_operator(operators, values)
+                if operators:
+                    operators.pop()  # Remove the opening parenthesis
+                else:
+                    raise ValueError("Unmatched closing parenthesis")
+            elif token in self.operators:
+                while (operators and operators[-1] in self.operators and
+                       self.precedence[operators[-1]] >= self.precedence[token]):
                     self._apply_operator(operators, values)
                 operators.append(token)
             else:
@@ -41,6 +51,8 @@ class Calculator:
                     raise ValueError(f"invalid token: {token}")
 
         while operators:
+            if operators[-1] == '(':
+                raise ValueError("Unmatched opening parenthesis")
             self._apply_operator(operators, values)
 
         if len(values) != 1:

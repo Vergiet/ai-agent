@@ -125,29 +125,37 @@ config = types.GenerateContentConfig(
 )
 
 
-response = client.models.generate_content(
-    model=model_name, contents=messages, config=config
-)
-
-function_call_part = response.function_calls[0]
-
-function_call_result = call_function(function_call_part, VERBOSE)
-
-if not function_call_result.parts[0].function_response.response:
-    raise Exception("invalid result")
-elif VERBOSE:
-    print(f"-> {function_call_result.parts[0].function_response.response}")
+# if not function_call_result.parts[0].function_response.response:
+#     raise Exception("invalid result")
+# elif VERBOSE:
+#     print(f"-> {function_call_result.parts[0].function_response.response}")
 
 
-# try:
-# print(
-#     f"Calling function: {function_call_part.name}({function_call_part.args})"
-# )
+for i in range(200):
 
-# print(response.text)
-# if VERBOSE:
-#     print(f"User prompt: {user_prompt}")
-#     print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
-#     print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
-# except Exception as e:
-#     print(e)
+    response = client.models.generate_content(
+        model=model_name, contents=messages, config=config
+    )
+
+    function_call_result = None
+    function_call_part = None
+
+    if response.function_calls:
+        function_call_part = response.function_calls[0]
+
+    if function_call_part:
+        function_call_result = call_function(function_call_part, VERBOSE)
+
+    for each_candidate in response.candidates:
+        messages.append(each_candidate.content)
+
+    if function_call_result:
+        messages.append(function_call_result)
+
+    if not function_call_result:
+        print(response.text)
+        reaction = input()
+        if reaction == "exit":
+            break
+        if reaction:
+            messages.append(types.Content(role="user", parts=[types.Part(text=reaction)]))
