@@ -140,17 +140,21 @@ for i in range(200):
     function_call_result = None
     function_call_part = None
 
-    if response.function_calls:
-        function_call_part = response.function_calls[0]
-
-    if function_call_part:
-        function_call_result = call_function(function_call_part, VERBOSE)
-
     for each_candidate in response.candidates:
         messages.append(each_candidate.content)
 
-    if function_call_result:
-        messages.append(function_call_result)
+    if response.function_calls:
+        for function_call in response.function_calls:
+            function_call_result = call_function(function_call, VERBOSE)
+            messages.append(function_call_result)
+
+        # function_call_part = [0]
+
+    # if function_call_part:
+    #     function_call_result = call_function(function_call_part, VERBOSE)
+
+    # if function_call_result:
+    #     messages.append(function_call_result)
 
     if not function_call_result:
         print(response.text)
